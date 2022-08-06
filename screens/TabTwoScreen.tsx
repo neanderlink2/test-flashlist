@@ -1,14 +1,34 @@
-import { StyleSheet } from 'react-native';
+import { FlashList } from '@shopify/flash-list';
+import React from 'react';
+import { ActivityIndicator, StyleSheet } from 'react-native';
 
-import EditScreenInfo from '../components/EditScreenInfo';
 import { Text, View } from '../components/Themed';
+import Item from './Item';
+import { useData } from './useData';
 
 export default function TabTwoScreen() {
+  const [data, loadingData] = useData();
+
+  if (loadingData) {
+    return <View style={styles.container}>
+      <ActivityIndicator />
+    </View>
+  }
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Tab Two</Text>
-      <View style={styles.separator} lightColor="#eee" darkColor="rgba(255,255,255,0.1)" />
-      <EditScreenInfo path="/screens/TabTwoScreen.tsx" />
+      <Text style={styles.title}>Tab One</Text>
+      <View style={{ width: '100%', height: '100%' }}>
+        <FlashList
+          data={data}
+          estimatedItemSize={200}
+          renderItem={({ item }) => <>
+            <Item photo={item.photo} name={item.title} comment={item.body} />
+            <View style={styles.separator} />
+          </>}
+          keyExtractor={item => item.id.toString()}
+
+        />
+      </View>
     </View>
   );
 }
